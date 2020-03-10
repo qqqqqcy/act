@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preact</title>
+</head>
+
+<body>
+    <script type="module">
+        import preact from "./preact.js"
+        // 1. change <div id="foo" name="bar">Hello!</div> => VNode
+        console.log(
+            // 生成 VNode
+            preact.h('div', { id: 'foo', name : 'bar' }, 'Hello!')
+        );
+    </script>
+</body>
+
+</html>
