@@ -9,11 +9,11 @@
 
 <body>
     <script type="module">
-        import preact from "./preact.js"
+        import preact from "./src/preact.js"
         // 1. change <div id="foo" name="bar">Hello!</div> => VNode
         console.log(
             // 生成 VNode
-            preact.h('div', { id: 'foo', name : 'bar' }, 'Hello!')
+            preact.h('div', { id: 'foo', name : 'bar' }, 'Hello!','World')
         );
     </script>
 </body>
