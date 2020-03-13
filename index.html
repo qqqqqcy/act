@@ -8,14 +8,14 @@
 </head>
 
 <body>
-    <script type="module">
-        import preact from "./src/preact.js"
-        // 1. change <div id="foo" name="bar">Hello!</div> => VNode
-        console.log(
-            // 生成 VNode
-            preact.h('div', { id: 'foo', name : 'bar' }, 'Hello!','World')
-        );
-    </script>
+    <script type="module" src="./preact.js"></script>
+
+    <div id="root">
+        <div id="wrap">
+            <span>haha</span>
+            <div>wowo</div>
+        </div>
+    </div>
 </body>
 
 </html>

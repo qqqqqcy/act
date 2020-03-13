@@ -58,7 +58,6 @@ export function setComponentProps(component, props, opts, context, mountAll) {
  */
 export function renderComponent(component, opts, mountAll, isChild) {
     if (component._disable) return;
-    console.log(2333)
     let props = component.props,
         state = component.state,
         context = component.context,
@@ -101,6 +100,7 @@ export function renderComponent(component, opts, mountAll, isChild) {
             context = extend(extend({}, context), component.getChildContext());
         }
 
+        // !base component 挂载的 DOM
         let childComponent = rendered && rendered.nodeName,
             toUnmount, base;
 

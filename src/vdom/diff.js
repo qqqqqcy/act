@@ -107,6 +107,7 @@ function idiff(dom, vnode, context, mountAll, componentRoot) {
     // If the VNode represents a Component, perform a component diff:
     // 组件的diff
     let vnodeName = vnode.nodeName;
+    // TODO
     if (typeof vnodeName === 'function') {
         // undefined vnode {} false
         // 主要对组件的defaultProps处理下
@@ -122,11 +123,12 @@ function idiff(dom, vnode, context, mountAll, componentRoot) {
     // 普通html标签或者svg
     vnodeName = String(vnodeName);
     if (!dom || !isNamedNode(dom, vnodeName)) {
-        // 和原来的类型不一样。例如原来是spacn后来变成了div
+        // 和原来的类型不一样。例如原来是 span 后来变成了 div
         out = createNode(vnodeName, isSvgMode);
 
         if (dom) {
             // move children into the replacement node
+            // 剪切 dom 的所有子元素到 out 上
             while (dom.firstChild) out.appendChild(dom.firstChild);
 
             // if the previous Element was mounted into the DOM, replace it inline
@@ -290,7 +292,6 @@ export function recollectNodeTree(node, unmountOnly) {
         if (unmountOnly === false || node[ATTR_KEY] == null) {
             removeNode(node);
         }
-
         removeChildren(node);
     }
 }
