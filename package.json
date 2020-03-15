@@ -1,14 +1,16 @@
 {
-  "name": "preact",
+  "name": "act",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/qqqqqcy/preact.git",
   "author": "Quincy <qqqqqcy@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "s":"node index.js"
+    "tsc": "tsc"
   },
+  "devDependencies": {},
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "typescript": "^3.8.3"
   }
 }
