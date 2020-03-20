@@ -1,5 +1,5 @@
 import { PropsType, VNode } from "../vnode/index";
-import render from "../render";
+import { mapProps } from "../render";
 
 export interface StateType {
   [stateName: string]: any;
@@ -13,8 +13,6 @@ export class Component {
   }
   setState(partialState: StateType) {
     Object.assign(this.state, partialState);
-    // this.state = { ...this.state, ...partialState };
-    // console.log(this.state);
     const oldVNode = this.VNode;
     const newVNode = this.render();
     updateComponent(this, oldVNode, newVNode);
@@ -28,8 +26,16 @@ export class Component {
 }
 
 function updateComponent(instance, oldVnode, newVnode) {
-  const newDom = render(newVnode);
-  instance.container.insertBefore(newDom as any, instance.oldDom);
-  instance.container.removeChild(instance.oldDom);
-  instance.oldDom = newDom;
+  if (oldVnode.type === newVnode.type) {
+    oldVnode._domNode.innerHTML = "";
+    console.log(oldVnode);
+
+    mapProps(oldVnode._domNode, newVnode.props); //更新节点
+  } else {
+    //remove
+  }
+  // const newDom = render(newVnode);
+  // instance.container.insertBefore(newDom as any, instance.oldDom);
+  // instance.container.removeChild(instance.oldDom);
+  // instance.oldDom = newDom;
 }

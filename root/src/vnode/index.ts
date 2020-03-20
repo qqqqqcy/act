@@ -19,6 +19,7 @@ export class VNode {
   // public key?: KeyType;
   // 子元素
   // public children: (VNode | string)[];
+  public _domNode: any;
 
   public constructor(tagName: TagName, props: PropsType) {
     this.tagName = tagName;

@@ -25,7 +25,7 @@ function renderChildren(
   });
 }
 
-function mapProps(domNode: HTMLElement, props: VNode["props"]) {
+export function mapProps(domNode: HTMLElement, props: VNode["props"]) {
   Object.entries(props).map(([key, val]) => {
     if (key === "children") {
       renderChildren(domNode, val);
@@ -43,20 +43,22 @@ function mapProps(domNode: HTMLElement, props: VNode["props"]) {
   });
 }
 
-function render(VNode: VNode, container?: HTMLElement) {
+export function render(VNode: VNode, container?: HTMLElement) {
   const { tagName, props } = VNode;
+
   if (!tagName) return;
 
   let domNode;
   if (typeof tagName === "string") {
     // 原生 dom
     domNode = document.createElement(tagName);
-    mapProps(domNode, props);
   } else if (typeof tagName === "function") {
     // Class dom
     domNode = createElementFromVNode(VNode, container);
   }
 
+  VNode._domNode = domNode;
+  mapProps(domNode, props);
   container?.appendChild(domNode);
   return domNode;
 }
@@ -74,5 +76,3 @@ function createElementFromVNode(VNode, container) {
 
   return domNode;
 }
-
-export default render;

@@ -24,7 +24,7 @@ function renderChildren(domNode, children) {
         }
     });
 }
-function mapProps(domNode, props) {
+export function mapProps(domNode, props) {
     Object.entries(props).map(([key, val]) => {
         if (key === "children") {
             renderChildren(domNode, val);
@@ -45,7 +45,7 @@ function mapProps(domNode, props) {
         }
     });
 }
-function render(VNode, container) {
+export function render(VNode, container) {
     const { tagName, props } = VNode;
     if (!tagName)
         return;
@@ -53,12 +53,13 @@ function render(VNode, container) {
     if (typeof tagName === "string") {
         // 原生 dom
         domNode = document.createElement(tagName);
-        mapProps(domNode, props);
     }
     else if (typeof tagName === "function") {
         // Class dom
         domNode = createElementFromVNode(VNode, container);
     }
+    VNode._domNode = domNode;
+    mapProps(domNode, props);
     container?.appendChild(domNode);
     return domNode;
 }
@@ -73,4 +74,3 @@ function createElementFromVNode(VNode, container) {
     instance.oldDom = domNode;
     return domNode;
 }
-export default render;
