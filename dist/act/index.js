@@ -32,13 +32,10 @@ class App extends Act.Component {
         }, 1000);
     }
     render() {
-        return (
-        // <div className={this.props.className}>
-        Act.h(Welcome, { name: this.state.val })
-        // <p>{this.state.val}</p>
-        // {new Date().toLocaleTimeString()}
-        // </div>
-        );
+        return (Act.h("div", { className: this.props.className },
+            Act.h("p", null, this.state.val),
+            new Date().toLocaleTimeString(),
+            " "));
     }
 }
 Act.render(Act.h(App, { className: "content" }), document.getElementById("root"));

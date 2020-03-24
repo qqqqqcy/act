@@ -36,11 +36,11 @@ class App extends Act.Component {
   }
   render() {
     return (
-      // <div className={this.props.className}>
-      <Welcome name={this.state.val} />
-      // <p>{this.state.val}</p>
-      // {new Date().toLocaleTimeString()}
-      // </div>
+      <div className={this.props.className}>
+        {/* // <Welcome name={this.state.val} /> */}
+        <p>{this.state.val}</p>
+        {new Date().toLocaleTimeString()}{" "}
+      </div>
     );
   }
 }

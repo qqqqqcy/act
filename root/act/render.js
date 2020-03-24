@@ -11,44 +11,57 @@ function mapProps(props = {}, element) {
   }
 }
 
-function getVnodeFromFunction(Vnode, container) {
+function getVnodeFromFunction(Vnode) {
+  if (Vnode.isComponent || Vnode.tagName?.prototype?.render) {
+    const { tagName, props } = Vnode;
+    // Class
+    if (Vnode._element) {
+      Vnode.componentWillUpdate && Vnode.componentWillUpdate();
+    } else {
+      Vnode = new tagName(props);
+      Vnode.componentWillMount && Vnode.componentWillMount();
+    }
+    // Vnode._element = ;
+    // return getVnodeFromFunction(Vnode.render());
+    return {
+      instance: Vnode,
+      Vnode: Vnode.render()
+    };
+  }
   if (typeof Vnode.tagName === "function") {
     const { tagName, props } = Vnode;
-    if (tagName.prototype?.render) {
-      // Class
-      Vnode = new tagName(props);
-      if (Vnode._container) {
-        Vnode.componentWillUpdate && Vnode.componentWillUpdate();
-      } else {
-        Vnode.componentWillMount && Vnode.componentWillMount();
-      }
-      Vnode._container = container;
-      return getVnodeFromFunction(Vnode.render(), container);
-    } else {
-      // Function
-      return getVnodeFromFunction(tagName(props), container);
-    }
+    // Function
+    // return getVnodeFromFunction(tagName(props));
+    return {
+      Vnode: tagName(props)
+    };
   }
-  return Vnode;
+  return { Vnode };
 }
 
-export default function render(Vnode, container) {
+// render vnode to vdom
+export default function render(Vnode) {
   // 简单类型
   Vnode = Vnode === null || Vnode === undefined ? "" : Vnode;
   Vnode = typeof Vnode === "boolean" ? "" : Vnode;
   Vnode = typeof Vnode === "number" ? Vnode + "" : Vnode;
   if (typeof Vnode === "string") {
     const textNode = document.createTextNode(String(Vnode));
-    container.appendChild(textNode);
+    return textNode;
   }
 
   // Class or Function
-  Vnode = getVnodeFromFunction(Vnode, container);
-
+  const { Vnode: tmpVnode, instance } = getVnodeFromFunction(Vnode);
+  Vnode = tmpVnode;
   // Element Vnode
   const { tagName, props, children } = Vnode;
   const element = document.createElement(tagName);
+
+  if (instance) {
+    instance._element = element;
+  }
+
   mapProps(props, element);
-  if (children) children.map(child => render(child, element));
-  container.appendChild(element);
+  if (children) children.map(child => element.appendChild(render(child)));
+  return element;
 }

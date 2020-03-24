@@ -7,6 +7,6 @@ export default {
     Component,
     render: (vnode, container) => {
         container.innerHTML = "";
-        render(vnode, container);
+        container.appendChild(render(vnode));
     }
 };
