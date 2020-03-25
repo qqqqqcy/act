@@ -1,4 +1,4 @@
-import React from "./act";
+// import React from "./act";
 
 // setInterval(() => {
 // const App = ({ className }) => (
@@ -64,9 +64,7 @@ class App extends React.Component {
     );
   }
 }
-
-React.render(<App className="content" />, document.getElementById("root"));
-
+ReactDOM.render(<App className="content" />, document.getElementById("root"));
 // }, 1000);
 
 // const Welcome = ({ name }) => {

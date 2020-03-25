@@ -19,9 +19,11 @@
 
 # 2. render
 
-一般包括 Vnode，container 两个参数
+一般包括 vNode，container 两个参数
 
-- Vnode 为简单类型 (string|number|boolean...)，直接渲染到 container 之上
-- Vnode 为原生 Dom，绑定 props 到 dom 之上
-- Vnode 为 Function 组件 - 在 createElement 中处理
-- Vnode 为 Class 组件
+- vNode 为简单类型 (string|number|boolean...)，直接渲染到 container 之上
+- vNode 为原生 Dom，绑定 props 到 dom 之上
+- vNode - fNode - Function 组件 - 执行
+- vNode - cNode - instance - 为 Class 组件 - new -> 执行 render
+
+# 3. componentWillUpdate

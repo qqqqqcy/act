@@ -9,9 +9,9 @@
  * ---------------------------------------
  **/
 
-function createElement(tagName, props = {}, ...children) {
+function createElement(tagType, props = {}, ...children) {
   return {
-    tagName,
+    tagType,
     props,
     children
   };

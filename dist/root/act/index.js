@@ -1,4 +1,4 @@
-import React from "./act";
+import Act from "./act";
 // setInterval(() => {
 // const App = ({ className }) => (
 //   <div>
@@ -10,7 +10,7 @@ import React from "./act";
 // const Welcome = ({ name }) => {
 //   return <p>{name}</p>;
 // };
-class Welcome extends React.Component {
+class Welcome extends Act.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -32,7 +32,7 @@ class Welcome extends React.Component {
             React.createElement("p", null, this.state.val)));
     }
 }
-class App extends React.Component {
+class App extends Act.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -54,7 +54,7 @@ class App extends React.Component {
             React.createElement("p", null, this.state.val)));
     }
 }
-React.render(React.createElement(App, { className: "content" }), document.getElementById("root"));
+Act.render(React.createElement(App, { className: "content" }), document.getElementById("root"));
 // }, 1000);
 // const Welcome = ({ name }) => {
 //   return <p>{name}</p>;
@@ -67,8 +67,8 @@ React.render(React.createElement(App, { className: "content" }), document.getEle
 //     </div>
 //   );
 // };
-// React.render(<App className="content" />, document.getElementById("root"));
-// class App extends React.Component {
+// Act.render(<App className="content" />, document.getElementById("root"));
+// class App extends Act.Component {
 //   constructor(props) {
 //     super(props);
 //     this.state = {
@@ -84,5 +84,5 @@ React.render(React.createElement(App, { className: "content" }), document.getEle
 //     );
 //   }
 // }
-// React.render(<App className="content" />, document.getElementById("root"));
+// Act.render(<App className="content" />, document.getElementById("root"));
 // console.log(<App className="content" />);

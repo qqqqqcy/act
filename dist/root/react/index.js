@@ -1,4 +1,6 @@
-import React from "./act";
+import React from "../../node_modules/react/umd/react.development";
+import ReactDOM from "../../node_modules/react-dom/umd/react-dom.development";
+// import React from "./act";
 // setInterval(() => {
 // const App = ({ className }) => (
 //   <div>
@@ -54,7 +56,7 @@ class App extends React.Component {
             React.createElement("p", null, this.state.val)));
     }
 }
-React.render(React.createElement(App, { className: "content" }), document.getElementById("root"));
+ReactDOM.render(React.createElement(App, { className: "content" }), document.getElementById("root"));
 // }, 1000);
 // const Welcome = ({ name }) => {
 //   return <p>{name}</p>;

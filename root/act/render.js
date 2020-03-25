@@ -11,54 +11,76 @@ function mapProps(props = {}, element) {
   }
 }
 
-function getVnodeFromFunction(Vnode) {
-  if (Vnode.isComponent || Vnode.tagName?.prototype?.render) {
-    const { tagName, props } = Vnode;
-    // Class
-    if (Vnode._element) {
-      Vnode.componentWillUpdate && Vnode.componentWillUpdate();
-    } else {
-      Vnode = new tagName(props);
-      Vnode.componentWillMount && Vnode.componentWillMount();
-    }
-    // Vnode._element = ;
-    // return getVnodeFromFunction(Vnode.render());
-    return {
-      instance: Vnode,
-      Vnode: Vnode.render()
-    };
+function getVNodeFromFunction(fNode) {
+  return fNode.tagType(fNode.props);
+}
+function getVNodeFromClass(cNode) {
+  // 可能传进来 instance 或 Class
+  const instance = cNode.render ? cNode : new cNode.tagType(cNode.props);
+  if (instance._element) {
+    instance.componentWillUpdate?.();
+  } else {
+    instance.componentWillMount?.();
   }
-  if (typeof Vnode.tagName === "function") {
-    const { tagName, props } = Vnode;
-    // Function
-    // return getVnodeFromFunction(tagName(props));
-    return {
-      Vnode: tagName(props)
-    };
-  }
-  return { Vnode };
+  return instance;
 }
 
-// render vnode to vdom
-export default function render(Vnode) {
-  // 简单类型
-  Vnode = Vnode === null || Vnode === undefined ? "" : Vnode;
-  Vnode = typeof Vnode === "boolean" ? "" : Vnode;
-  Vnode = typeof Vnode === "number" ? Vnode + "" : Vnode;
-  if (typeof Vnode === "string") {
-    const textNode = document.createTextNode(String(Vnode));
+// Node 包括 Document, Element, CharacterData(Parent of Text, Comment, etc.).
+// Render vNode to VDom
+export default function render(vNode) {
+  vNode = vNode === null || vNode === undefined ? "" : vNode;
+  vNode = typeof vNode === "boolean" ? "" : vNode;
+  vNode = typeof vNode === "number" ? vNode + "" : vNode;
+
+  /**
+   * Text Node
+   * vNode: 'hello world'
+   */
+  if (typeof vNode === "string") {
+    const textNode = document.createTextNode(String(vNode));
     return textNode;
   }
 
-  // Class or Function
-  const { Vnode: tmpVnode, instance } = getVnodeFromFunction(Vnode);
-  Vnode = tmpVnode;
-  // Element Vnode
-  const { tagName, props, children } = Vnode;
-  const element = document.createElement(tagName);
+  /**
+   * Class Node
+   * vNode: {  tagType: Class { constructor(props){}...}
+   *    props: {id:...,onClick...}
+   *    children:[] }
+   */
+  let cNode, instance;
+  if (
+    vNode._isInstance ||
+    (typeof vNode.tagType === "function" && vNode.tagType.prototype?.render)
+  ) {
+    cNode = vNode;
+    instance = getVNodeFromClass(vNode);
+    vNode = instance.render();
+  }
+
+  /**
+   * Function Node
+   * vNode: {  tagType: (props)=>{...}
+   *    props: {id:...,onClick...}
+   *    children:[] }
+   */
+  let fNode;
+  if (typeof vNode.tagType === "function") {
+    fNode = vNode;
+    vNode = getVNodeFromFunction(fNode);
+  }
+
+  /**
+   * 标准 Node
+   * vNode: {  tagType: 'div'
+   *    props: {id:...,onClick...}
+   *    children:['hello',vNode,cNode...] }
+   */
+  const { tagType, props, children } = vNode;
+  const element = document.createElement(tagType);
 
   if (instance) {
     instance._element = element;
+    instance._cNode = cNode;
   }
 
   mapProps(props, element);

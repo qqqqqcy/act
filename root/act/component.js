@@ -2,26 +2,28 @@
 import render from "./render";
 
 export default class Component {
-  isComponent = true;
-
   constructor(props = {}) {
     this.state = {};
     this.props = props;
+    this._isMounted = true;
   }
   setState(newState) {
     Object.assign(this.state, newState);
-    if (this._element) {
-      // Act.render(this.render(), this._container);
-      const oldElement = this._element,
-        newElement = render(this),
+    this.updateComponent();
+  }
+
+  updateComponent() {
+    const instance = this;
+    if (instance._element) {
+      const oldElement = instance._element,
+        newElement = render(instance),
         parentELement = oldElement.parentElement;
+
       parentELement.insertBefore(newElement, oldElement);
       parentELement.removeChild(oldElement);
     }
   }
-
   componentWillMount() {}
   componentWillUpdate() {}
-
   render() {}
 }
