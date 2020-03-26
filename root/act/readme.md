@@ -26,4 +26,12 @@
 - vNode - fNode - Function 组件 - 执行
 - vNode - cNode - instance - 为 Class 组件 - new -> 执行 render
 
-# 3. componentWillUpdate
+# 3. diff 算法
+
+假设有 vNode
+
+- 比较 vNode.tagType
+- 比较 props
+- 比较 children
+  - 顺序
+  - 递归

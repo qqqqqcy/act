@@ -17,17 +17,12 @@ function getVNodeFromFunction(fNode) {
 function getVNodeFromClass(cNode) {
     // 可能传进来 instance 或 Class
     const instance = cNode.render ? cNode : new cNode.tagType(cNode.props);
-    if (instance._element) {
-        instance.componentWillUpdate?.();
-    }
-    else {
-        instance.componentWillMount?.();
-    }
     return instance;
 }
+//
 // Node 包括 Document, Element, CharacterData(Parent of Text, Comment, etc.).
 // Render vNode to VDom
-export default function render(vNode) {
+export default function render(vNode, vNodeAttr = { children: [], nodeType: "element" }) {
     vNode = vNode === null || vNode === undefined ? "" : vNode;
     vNode = typeof vNode === "boolean" ? "" : vNode;
     vNode = typeof vNode === "number" ? vNode + "" : vNode;
@@ -37,7 +32,8 @@ export default function render(vNode) {
      */
     if (typeof vNode === "string") {
         const textNode = document.createTextNode(String(vNode));
-        return textNode;
+        vNodeAttr.nodeType = "string";
+        return { vDom: textNode, vNodeAttr };
     }
     /**
      * Class Node
@@ -50,6 +46,12 @@ export default function render(vNode) {
         (typeof vNode.tagType === "function" && vNode.tagType.prototype?.render)) {
         cNode = vNode;
         instance = getVNodeFromClass(vNode);
+        if (instance._element) {
+            instance.componentWillUpdate?.();
+        }
+        else {
+            instance.componentWillMount?.();
+        }
         vNode = instance.render();
     }
     /**
@@ -77,6 +79,10 @@ export default function render(vNode) {
     }
     mapProps(props, element);
     if (children)
-        children.map(child => element.appendChild(render(child)));
-    return element;
+        children.map(child => {
+            const { vDom: childVDom, vNodeAttr: childVNodeAttr } = render(child);
+            element.appendChild(childVDom);
+            vNodeAttr.children.push(childVNodeAttr);
+        });
+    return { vDom: element, vNodeAttr };
 }

@@ -5,7 +5,7 @@ export default class Component {
   constructor(props = {}) {
     this.state = {};
     this.props = props;
-    this._isMounted = true;
+    this._isInstance = true;
   }
   setState(newState) {
     Object.assign(this.state, newState);
@@ -16,9 +16,8 @@ export default class Component {
     const instance = this;
     if (instance._element) {
       const oldElement = instance._element,
-        newElement = render(instance),
         parentELement = oldElement.parentElement;
-
+      const { vDom: newElement, vNodeAttr } = render(instance);
       parentELement.insertBefore(newElement, oldElement);
       parentELement.removeChild(oldElement);
     }

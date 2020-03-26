@@ -8,6 +8,7 @@ export default {
   Component,
   render: (vnode, container) => {
     container.innerHTML = "";
-    container.appendChild(render(vnode));
+    const { vDom, vNodeAttr } = render(vnode);
+    container.appendChild(vDom);
   }
 };

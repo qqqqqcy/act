@@ -10,24 +10,23 @@ function mapProps(props = {}, element) {
     }
   }
 }
-
 function getVNodeFromFunction(fNode) {
   return fNode.tagType(fNode.props);
 }
 function getVNodeFromClass(cNode) {
   // 可能传进来 instance 或 Class
   const instance = cNode.render ? cNode : new cNode.tagType(cNode.props);
-  if (instance._element) {
-    instance.componentWillUpdate?.();
-  } else {
-    instance.componentWillMount?.();
-  }
   return instance;
 }
 
+//
+
 // Node 包括 Document, Element, CharacterData(Parent of Text, Comment, etc.).
 // Render vNode to VDom
-export default function render(vNode) {
+export default function render(
+  vNode,
+  vNodeAttr = { children: [], nodeType: "element" }
+) {
   vNode = vNode === null || vNode === undefined ? "" : vNode;
   vNode = typeof vNode === "boolean" ? "" : vNode;
   vNode = typeof vNode === "number" ? vNode + "" : vNode;
@@ -38,9 +37,9 @@ export default function render(vNode) {
    */
   if (typeof vNode === "string") {
     const textNode = document.createTextNode(String(vNode));
-    return textNode;
+    vNodeAttr.nodeType = "string";
+    return { vDom: textNode, vNodeAttr };
   }
-
   /**
    * Class Node
    * vNode: {  tagType: Class { constructor(props){}...}
@@ -54,9 +53,13 @@ export default function render(vNode) {
   ) {
     cNode = vNode;
     instance = getVNodeFromClass(vNode);
+    if (instance._element) {
+      instance.componentWillUpdate?.();
+    } else {
+      instance.componentWillMount?.();
+    }
     vNode = instance.render();
   }
-
   /**
    * Function Node
    * vNode: {  tagType: (props)=>{...}
@@ -68,7 +71,6 @@ export default function render(vNode) {
     fNode = vNode;
     vNode = getVNodeFromFunction(fNode);
   }
-
   /**
    * 标准 Node
    * vNode: {  tagType: 'div'
@@ -84,6 +86,11 @@ export default function render(vNode) {
   }
 
   mapProps(props, element);
-  if (children) children.map(child => element.appendChild(render(child)));
-  return element;
+  if (children)
+    children.map(child => {
+      const { vDom: childVDom, vNodeAttr: childVNodeAttr } = render(child);
+      element.appendChild(childVDom);
+      vNodeAttr.children.push(childVNodeAttr);
+    });
+  return { vDom: element, vNodeAttr };
 }
