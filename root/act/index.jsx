@@ -23,9 +23,9 @@ class Welcome extends React.Component {
 
   componentWillMount() {
     console.log("componentWillMount");
-    // setInterval(() => {
-    //   this.setState({ val: new Date().toLocaleTimeString() });
-    // }, 1000);
+    setInterval(() => {
+      this.setState({ val: new Date().toLocaleTimeString() });
+    }, 1000);
   }
   componentWillUpdate() {
     console.log("componentWillUpdate");
@@ -48,9 +48,9 @@ class App extends React.Component {
   }
   componentWillMount() {
     // console.log("componentWillMount");
-    setInterval(() => {
-      this.setState({ val: new Date().toLocaleTimeString() });
-    }, 1000);
+    // setInterval(() => {
+    //   this.setState({ val: new Date().toLocaleTimeString() });
+    // }, 1000);
   }
   componentWillUpdate() {
     // console.log("componentWillUpdate");

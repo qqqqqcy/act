@@ -6,7 +6,8 @@
   "author": "Quincy <qqqqqcy@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "s": "node index.js"
   },
   "devDependencies": {},
   "dependencies": {

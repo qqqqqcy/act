@@ -8,7 +8,7 @@ export default {
   Component,
   render: (vnode, container) => {
     container.innerHTML = "";
-    const { vDom, vNodeAttr } = render(vnode);
-    container.appendChild(vDom);
+    const vTreeNode = render(vnode);
+    container.appendChild(vTreeNode.mount());
   }
 };

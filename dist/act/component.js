@@ -1,5 +1,3 @@
-// import Act from "./act";
-import render from "./render";
 export default class Component {
     constructor(props = {}) {
         this.state = {};
@@ -12,12 +10,7 @@ export default class Component {
     }
     updateComponent() {
         const instance = this;
-        if (instance._element) {
-            const oldElement = instance._element, parentELement = oldElement.parentElement;
-            const { vDom: newElement, vNodeAttr } = render(instance);
-            parentELement.insertBefore(newElement, oldElement);
-            parentELement.removeChild(oldElement);
-        }
+        instance._classNode.update();
     }
     componentWillMount() { }
     componentWillUpdate() { }
