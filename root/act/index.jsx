@@ -23,9 +23,9 @@ class Welcome extends React.Component {
 
   componentWillMount() {
     console.log("componentWillMount");
-    setInterval(() => {
-      this.setState({ val: new Date().toLocaleTimeString() });
-    }, 1000);
+    // setInterval(() => {
+    //   this.setState({ val: new Date().toLocaleTimeString() });
+    // }, 1000);
   }
   componentWillUpdate() {
     console.log("componentWillUpdate");
@@ -33,8 +33,8 @@ class Welcome extends React.Component {
   render() {
     return (
       <div>
-        <p>{this.props.val}</p>
-        <p>{this.state.val}</p>
+        <p>props.name {this.props.name}</p>
+        <p>state.val {this.state.val}</p>
       </div>
     );
   }
@@ -48,18 +48,23 @@ class App extends React.Component {
   }
   componentWillMount() {
     // console.log("componentWillMount");
-    // setInterval(() => {
-    //   this.setState({ val: new Date().toLocaleTimeString() });
-    // }, 1000);
+    setInterval(() => {
+      this.setState({ val: new Date().toLocaleTimeString() });
+    }, 1000);
   }
   componentWillUpdate() {
     // console.log("componentWillUpdate");
   }
   render() {
+    const { val } = this.state;
     return (
-      <div className={this.props.className}>
-        <Welcome name={this.state.val} />
-        <p>{this.state.val}</p>
+      <div
+        className={this.props.className + " " + val}
+        {...(new Date().getSeconds() % 2 ? { id: 1 } : {})}
+      >
+        {val}
+        <Welcome name={val} />
+        <p>{val}</p>
       </div>
     );
   }

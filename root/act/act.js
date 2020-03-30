@@ -1,14 +1,14 @@
 import createElement from "./createElement";
-import render from "./render";
+import changeVNodeToVTreeNode from "./render";
 import Component from "./component";
 
 export default {
   createElement,
   h: createElement,
   Component,
-  render: (vnode, container) => {
+  render: (vNode, container) => {
     container.innerHTML = "";
-    const vTreeNode = render(vnode);
+    const vTreeNode = changeVNodeToVTreeNode(vNode);
     container.appendChild(vTreeNode.mount());
   }
 };

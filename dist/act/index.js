@@ -19,17 +19,21 @@ class Welcome extends React.Component {
     }
     componentWillMount() {
         console.log("componentWillMount");
-        setInterval(() => {
-            this.setState({ val: new Date().toLocaleTimeString() });
-        }, 1000);
+        // setInterval(() => {
+        //   this.setState({ val: new Date().toLocaleTimeString() });
+        // }, 1000);
     }
     componentWillUpdate() {
         console.log("componentWillUpdate");
     }
     render() {
         return (React.createElement("div", null,
-            React.createElement("p", null, this.props.val),
-            React.createElement("p", null, this.state.val)));
+            React.createElement("p", null,
+                "props.name ",
+                this.props.name),
+            React.createElement("p", null,
+                "state.val ",
+                this.state.val)));
     }
 }
 class App extends React.Component {
@@ -41,17 +45,19 @@ class App extends React.Component {
     }
     componentWillMount() {
         // console.log("componentWillMount");
-        // setInterval(() => {
-        //   this.setState({ val: new Date().toLocaleTimeString() });
-        // }, 1000);
+        setInterval(() => {
+            this.setState({ val: new Date().toLocaleTimeString() });
+        }, 1000);
     }
     componentWillUpdate() {
         // console.log("componentWillUpdate");
     }
     render() {
-        return (React.createElement("div", { className: this.props.className },
-            React.createElement(Welcome, { name: this.state.val }),
-            React.createElement("p", null, this.state.val)));
+        const { val } = this.state;
+        return (React.createElement("div", Object.assign({ className: this.props.className + " " + val }, (new Date().getSeconds() % 2 ? { id: 1 } : {})),
+            val,
+            React.createElement(Welcome, { name: val }),
+            React.createElement("p", null, val)));
     }
 }
 React.render(React.createElement(App, { className: "content" }), document.getElementById("root"));

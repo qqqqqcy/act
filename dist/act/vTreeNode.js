@@ -1,4 +1,4 @@
-import render from "./render";
+import changeVNodeToVTreeNode from "./render";
 function mapProps(props = {}, element) {
     for (const key in props) {
         if (props.hasOwnProperty(key)) {
@@ -33,7 +33,11 @@ export class StringNode extends VTreeNode {
     }
     mount() {
         const textNode = document.createTextNode(String(this.vNode));
-        return textNode;
+        return (this._textNode = textNode);
+    }
+    update(vNode) {
+        this._textNode.deleteData(0, this.vNode.length);
+        this._textNode.appendData(vNode);
     }
 }
 /**
@@ -51,11 +55,46 @@ export class ElementNode extends VTreeNode {
         const element = document.createElement(tagType);
         mapProps(props, element);
         if (children)
-            children.map(child => {
-                const vTreeNode = render(child);
+            this._children = children.map(child => {
+                const vTreeNode = changeVNodeToVTreeNode(child);
                 element.appendChild(vTreeNode.mount());
+                return vTreeNode;
             });
-        return element;
+        return (this._element = element);
+    }
+    update(newElementVNode) {
+        const props = this.vNode.props || {};
+        const newProps = newElementVNode.props || {};
+        this.vNode = newElementVNode;
+        // 更新属性
+        this._updateDOMProperties(props, newProps);
+        this._updateDOMChildren(newElementVNode.children);
+    }
+    //   更新属性
+    _updateDOMProperties(props, newProps) {
+        Object.keys(props).map(key => {
+            if (props.hasOwnProperty(key) && !newProps.hasOwnProperty(key)) {
+                if (key === "className") {
+                    this._element.removeAttribute("class");
+                }
+                else {
+                    this._element.removeAttribute(key);
+                }
+            }
+        });
+        mapProps(newProps, this._element);
+    }
+    //   更新子节点
+    _updateDOMChildren(newChildren) {
+        const children = this._children;
+        newChildren.map((vNode, idx) => {
+            const currentVTreeNode = changeVNodeToVTreeNode(vNode);
+            if (currentVTreeNode.nodeType === children[idx].nodeType) {
+                children[idx].update(vNode);
+            }
+        });
+        // console.log(newChildren);
+        // console.log(this._children);
     }
 }
 /**
@@ -70,7 +109,7 @@ export class FunctionNode extends VTreeNode {
     }
     mount() {
         const fNode = this.vNode;
-        const vTreeNode = render(fNode.tagType(fNode.props));
+        const vTreeNode = changeVNodeToVTreeNode(fNode.tagType(fNode.props));
         return vTreeNode.mount();
     }
 }
@@ -87,21 +126,37 @@ export class ClassNode extends VTreeNode {
     mount() {
         this.instance = new this.vNode.tagType(this.vNode.props);
         this.instance.componentWillMount?.();
-        const vTreeNode = render(this.instance.render());
+        this._elementVNode = this.instance.render();
+        const vTreeNode = changeVNodeToVTreeNode(this._elementVNode);
         const mounted = vTreeNode.mount();
         // RECORD
-        // this.instance._vTreeNode = vTreeNode;
-        this.instance._element = mounted;
+        this._vTreeNode = vTreeNode;
+        this._element = mounted;
         this.instance._classNode = this;
         return mounted;
     }
-    update() {
-        this.instance.componentWillUpdate?.();
-        const newVTreeNode = render(this.instance.render());
-        const oldElement = this.instance._element, parentELement = oldElement.parentElement;
-        const newElement = newVTreeNode.mount();
-        parentELement.insertBefore(newElement, oldElement);
-        parentELement.removeChild(oldElement);
-        this.instance._element = newElement;
+    update(newVNode, newState) {
+        this.vNode = newVNode || this.vNode;
+        const instance = this.instance;
+        // 获取新的state,props
+        const nextState = { ...instance.state, ...newState };
+        const nextProps = this.vNode.props;
+        instance.componentWillUpdate?.();
+        // 更改state,props
+        instance.state = nextState;
+        instance.props = nextProps;
+        const newElementVNode = instance.render();
+        const newVTreeNode = changeVNodeToVTreeNode(newElementVNode);
+        if (newElementVNode?.tagType === this._elementVNode?.tagType) {
+            // 更新
+            this._vTreeNode.update(newElementVNode);
+        }
+        else {
+            const oldElement = this._element, parentELement = oldElement.parentElement;
+            const newElement = newVTreeNode.mount();
+            parentELement.insertBefore(newElement, oldElement);
+            parentELement.removeChild(oldElement);
+            this._element = newElement;
+        }
     }
 }

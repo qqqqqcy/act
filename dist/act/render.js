@@ -1,6 +1,6 @@
 import { StringNode, ElementNode, ClassNode, FunctionNode } from "./vTreeNode";
 // Render vNode to vTreeNode
-export default function render(vNode) {
+export default function changeVNodeToVTreeNode(vNode) {
     vNode = vNode === null || vNode === undefined ? "" : vNode;
     vNode = typeof vNode === "boolean" ? "" : vNode;
     vNode = typeof vNode === "number" ? vNode + "" : vNode;

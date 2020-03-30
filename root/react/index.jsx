@@ -43,23 +43,24 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      val: new Date().toLocaleTimeString()
+      val: new Date().getSeconds()
     };
   }
   componentWillMount() {
     // console.log("componentWillMount");
     setInterval(() => {
-      this.setState({ val: new Date().toLocaleTimeString() });
+      this.setState({ val: new Date().getSeconds() });
     }, 1000);
   }
   componentWillUpdate() {
     // console.log("componentWillUpdate");
   }
   render() {
+    const { val } = this.state;
     return (
       <div className={this.props.className}>
-        <Welcome name={this.state.val} />
-        <p>{this.state.val}</p>
+        <Welcome key="aaa" name={val} />
+        <p>{val}</p>
       </div>
     );
   }
