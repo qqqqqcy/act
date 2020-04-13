@@ -15,7 +15,7 @@ class Welcome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            val: new Date().toLocaleTimeString()
+            val: new Date().toLocaleTimeString(),
         };
     }
     componentWillMount() {
@@ -37,7 +37,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            val: new Date().getSeconds()
+            val: new Date().getSeconds(),
         };
     }
     componentWillMount() {

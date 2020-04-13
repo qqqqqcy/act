@@ -1,5 +1,5 @@
 import createElement from "./createElement";
-import changeVNodeToVTreeNode from "./render";
+import getLeafFromVNode from "./render";
 import Component from "./component";
 export default {
     createElement,
@@ -7,7 +7,7 @@ export default {
     Component,
     render: (vNode, container) => {
         container.innerHTML = "";
-        const vTreeNode = changeVNodeToVTreeNode(vNode);
-        container.appendChild(vTreeNode.mount());
-    }
+        const leaf = getLeafFromVNode(vNode);
+        container.appendChild(leaf.mount());
+    },
 };

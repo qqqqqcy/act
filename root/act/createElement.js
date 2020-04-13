@@ -9,11 +9,13 @@
  * ---------------------------------------
  **/
 
-function createElement(tagType, props = {}, ...children) {
+function createElement(tagType, props, ...children) {
+  const { key } = props || {};
   return {
     tagType,
     props,
-    children
+    children,
+    key,
   };
 }
 

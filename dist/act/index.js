@@ -14,7 +14,7 @@ class Welcome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            val: new Date().toLocaleTimeString()
+            val: new Date().toLocaleTimeString(),
         };
     }
     componentWillMount() {
@@ -27,20 +27,24 @@ class Welcome extends React.Component {
         console.log("componentWillUpdate");
     }
     render() {
+        const arr = new Date().getSeconds() % 2 ? ["aa", "bb", "cc"] : ["cc", "aa", "bb"];
         return (React.createElement("div", null,
             React.createElement("p", null,
                 "props.name ",
                 this.props.name),
             React.createElement("p", null,
                 "state.val ",
-                this.state.val)));
+                this.state.val),
+            React.createElement("ul", null, arr.map((key) => {
+                return React.createElement("li", { key: key }, key);
+            }))));
     }
 }
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            val: new Date().toLocaleTimeString()
+            val: new Date().toLocaleTimeString(),
         };
     }
     componentWillMount() {
@@ -57,7 +61,7 @@ class App extends React.Component {
         return (React.createElement("div", Object.assign({ className: this.props.className + " " + val }, (new Date().getSeconds() % 2 ? { id: 1 } : {})),
             val,
             React.createElement(Welcome, { name: val }),
-            React.createElement("p", null, val)));
+            new Date().getSeconds() % 2 ? React.createElement("p", null, val) : React.createElement("span", null, val)));
     }
 }
 React.render(React.createElement(App, { className: "content" }), document.getElementById("root"));

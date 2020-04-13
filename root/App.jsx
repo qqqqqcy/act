@@ -7,7 +7,7 @@ const simpleJSX = (
     {1}
     <span>Wolrd</span>
     <br />
-    {["1", "2", "3"].map(val => (
+    {["1", "2", "3"].map((val) => (
       <p>{val}</p>
     ))}
   </div>

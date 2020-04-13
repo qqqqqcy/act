@@ -17,7 +17,7 @@ class Welcome extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      val: new Date().toLocaleTimeString()
+      val: new Date().toLocaleTimeString(),
     };
   }
 
@@ -31,10 +31,17 @@ class Welcome extends React.Component {
     console.log("componentWillUpdate");
   }
   render() {
+    const arr =
+      new Date().getSeconds() % 2 ? ["aa", "bb", "cc"] : ["cc", "aa", "bb"];
     return (
       <div>
         <p>props.name {this.props.name}</p>
         <p>state.val {this.state.val}</p>
+        <ul>
+          {arr.map((key) => {
+            return <li key={key}>{key}</li>;
+          })}
+        </ul>
       </div>
     );
   }
@@ -43,7 +50,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      val: new Date().toLocaleTimeString()
+      val: new Date().toLocaleTimeString(),
     };
   }
   componentWillMount() {
@@ -64,7 +71,7 @@ class App extends React.Component {
       >
         {val}
         <Welcome name={val} />
-        <p>{val}</p>
+        {new Date().getSeconds() % 2 ? <p>{val}</p> : <span>{val}</span>}
       </div>
     );
   }

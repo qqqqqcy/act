@@ -4,7 +4,7 @@ const simpleJSX = (React.createElement("div", { className: "simpleJSX", style: "
     1,
     React.createElement("span", null, "Wolrd"),
     React.createElement("br", null),
-    ["1", "2", "3"].map(val => (React.createElement("p", null, val)))));
+    ["1", "2", "3"].map((val) => (React.createElement("p", null, val)))));
 class MyComponent extends Component {
     constructor(props) {
         super(props);

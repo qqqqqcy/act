@@ -1,4 +1,4 @@
-import changeVNodeToVTreeNode from "./render";
+import getLeafFromVNode from "./render";
 function mapProps(props = {}, element) {
     for (const key in props) {
         if (props.hasOwnProperty(key)) {
@@ -27,7 +27,7 @@ class VTreeNode {
     mount() { }
 }
 // 基础类型
-export class StringNode extends VTreeNode {
+export class TextLeaf extends VTreeNode {
     constructor(vNode) {
         super(vNode, "string");
     }
@@ -46,7 +46,7 @@ export class StringNode extends VTreeNode {
  *    props: {id:...,onClick...}
  *    children:['hello',vNode,cNode...] }
  */
-export class ElementNode extends VTreeNode {
+export class ElementLeaf extends VTreeNode {
     constructor(vNode) {
         super(vNode);
     }
@@ -56,9 +56,9 @@ export class ElementNode extends VTreeNode {
         mapProps(props, element);
         if (children)
             this._children = children.map(child => {
-                const vTreeNode = changeVNodeToVTreeNode(child);
-                element.appendChild(vTreeNode.mount());
-                return vTreeNode;
+                const leaf = getLeafFromVNode(child);
+                element.appendChild(leaf.mount());
+                return leaf;
             });
         return (this._element = element);
     }
@@ -88,7 +88,7 @@ export class ElementNode extends VTreeNode {
     _updateDOMChildren(newChildren) {
         const children = this._children;
         newChildren.map((vNode, idx) => {
-            const currentVTreeNode = changeVNodeToVTreeNode(vNode);
+            const currentVTreeNode = getLeafFromVNode(vNode);
             if (currentVTreeNode.nodeType === children[idx].nodeType) {
                 children[idx].update(vNode);
             }
@@ -103,14 +103,14 @@ export class ElementNode extends VTreeNode {
  *    props: {id:...,onClick...}
  *    children:[] }
  */
-export class FunctionNode extends VTreeNode {
+export class FunctionLeaf extends VTreeNode {
     constructor(vNode) {
         super(vNode, "function");
     }
     mount() {
         const fNode = this.vNode;
-        const vTreeNode = changeVNodeToVTreeNode(fNode.tagType(fNode.props));
-        return vTreeNode.mount();
+        const leaf = getLeafFromVNode(fNode.tagType(fNode.props));
+        return leaf.mount();
     }
 }
 /**
@@ -119,37 +119,39 @@ export class FunctionNode extends VTreeNode {
  *    props: {id:...,onClick...}
  *    children:[] }
  */
-export class ClassNode extends VTreeNode {
+export class ClassLeaf extends VTreeNode {
     constructor(vNode) {
         super(vNode, "class");
     }
     mount() {
+        var _a, _b;
         this.instance = new this.vNode.tagType(this.vNode.props);
-        this.instance.componentWillMount?.();
+        (_b = (_a = this.instance).componentWillMount) === null || _b === void 0 ? void 0 : _b.call(_a);
         this._elementVNode = this.instance.render();
-        const vTreeNode = changeVNodeToVTreeNode(this._elementVNode);
-        const mounted = vTreeNode.mount();
+        const leaf = getLeafFromVNode(this._elementVNode);
+        const mounted = leaf.mount();
         // RECORD
-        this._vTreeNode = vTreeNode;
+        this._leaf = leaf;
         this._element = mounted;
-        this.instance._classNode = this;
+        this.instance._classLeaf = this;
         return mounted;
     }
     update(newVNode, newState) {
+        var _a, _b;
         this.vNode = newVNode || this.vNode;
         const instance = this.instance;
         // 获取新的state,props
-        const nextState = { ...instance.state, ...newState };
+        const nextState = Object.assign(Object.assign({}, instance.state), newState);
         const nextProps = this.vNode.props;
-        instance.componentWillUpdate?.();
+        (_a = instance.componentWillUpdate) === null || _a === void 0 ? void 0 : _a.call(instance);
         // 更改state,props
         instance.state = nextState;
         instance.props = nextProps;
         const newElementVNode = instance.render();
-        const newVTreeNode = changeVNodeToVTreeNode(newElementVNode);
-        if (newElementVNode?.tagType === this._elementVNode?.tagType) {
-            // 更新
-            this._vTreeNode.update(newElementVNode);
+        const newVTreeNode = getLeafFromVNode(newElementVNode);
+        if ((newElementVNode === null || newElementVNode === void 0 ? void 0 : newElementVNode.tagType) === ((_b = this._elementVNode) === null || _b === void 0 ? void 0 : _b.tagType)) {
+            // 本质还是 update ElementLeaf
+            this._leaf.update(newElementVNode);
         }
         else {
             const oldElement = this._element, parentELement = oldElement.parentElement;

@@ -1,18 +1,18 @@
-import { StringNode, ElementNode, ClassNode, FunctionNode } from "./vTreeNode";
+import { TextLeaf, ElementLeaf, ClassLeaf, FunctionLeaf } from "./leaf";
 
-// Render vNode to vTreeNode
-export default function changeVNodeToVTreeNode(vNode) {
+// Render vNode to leaf
+export default function getLeafFromVNode(vNode) {
   vNode = vNode === null || vNode === undefined ? "" : vNode;
   vNode = typeof vNode === "boolean" ? "" : vNode;
   vNode = typeof vNode === "number" ? vNode + "" : vNode;
 
   if (typeof vNode === "string") {
-    return new StringNode(vNode);
+    return new TextLeaf(vNode);
   } else if (typeof vNode === "object" && typeof vNode.tagType === "string") {
-    return new ElementNode(vNode);
+    return new ElementLeaf(vNode);
   } else if (typeof vNode === "object" && vNode.tagType.prototype?.render) {
-    return new ClassNode(vNode);
+    return new ClassLeaf(vNode);
   } else {
-    return new FunctionNode(vNode);
+    return new FunctionLeaf(vNode);
   }
 }
