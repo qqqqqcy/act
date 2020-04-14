@@ -10,7 +10,11 @@
  **/
 
 function createElement(tagType, props, ...children) {
+  if (children[0] instanceof Array) {
+    children = [...children[0]];
+  }
   const { key } = props || {};
+
   return {
     tagType,
     props,

@@ -1,5 +1,10 @@
 import getLeafFromVNode from "./render";
-import { childrenLeafToMap, shouldUpdate } from "./utils";
+import { childrenLeafToMap, shouldUpdate, patch, UPDATE_TYPES } from "./utils";
+
+let updateDepth = 0;
+// 全局的更新队列
+let diffQueue = [];
+
 class Leaf {
   key;
   vNode;
@@ -59,6 +64,7 @@ export class TextLeaf extends Leaf {
 export class ElementLeaf extends Leaf {
   elementVNode;
   childrenLeaf;
+  fatherLeaf;
 
   constructor(vNode) {
     super("elementVNode", vNode);
@@ -70,8 +76,10 @@ export class ElementLeaf extends Leaf {
     this.dom = dom;
     this._mapProps(props, dom);
     if (children)
-      this.childrenLeaf = children.map((child) => {
+      this.childrenLeaf = children.map((child, index) => {
         const leaf = getLeafFromVNode(child);
+        leaf.mountIndex = index;
+        leaf.fatherLeaf = this;
         this.dom.appendChild(leaf.mount());
         return leaf;
       });
@@ -118,29 +126,71 @@ export class ElementLeaf extends Leaf {
 
   //   更新子节点
   _updateChildrenLeaf(elementVNodes) {
-    const childrenLeaf = this.childrenLeaf;
-    const leafMap = childrenLeafToMap(childrenLeaf);
+    updateDepth++;
+
+    // 拍平
+    const leafMap = childrenLeafToMap(this.childrenLeaf);
     const newLeafMap = {};
 
-    elementVNodes.map((elementVNode, index) => {
+    const childrenLeaf = elementVNodes.map((elementVNode, index) => {
       const name = elementVNode.key || index.toString();
       const preLeaf = leafMap[name];
       const newLeaf = getLeafFromVNode(elementVNode);
       if (shouldUpdate(preLeaf, newLeaf)) {
         preLeaf.update(elementVNode);
         newLeafMap[name] = preLeaf;
+        diffQueue.push({
+          preLeaf,
+          leaf: newLeafMap[name],
+          type: UPDATE_TYPES.MOVE_EXISTING,
+          fromIndex: preLeaf.mountIndex,
+          toIndex: index,
+        });
       } else {
         newLeafMap[name] = newLeaf;
+        diffQueue.push({
+          preLeaf,
+          leaf: newLeafMap[name],
+          type: UPDATE_TYPES.REMOVE_LEAF,
+          fromIndex: leafMap[name].mountIndex,
+          toIndex: null,
+        });
+        diffQueue.push({
+          preLeaf,
+          leaf: newLeafMap[name],
+          type: UPDATE_TYPES.INSERT_LEAF,
+          fromIndex: null,
+          toIndex: index,
+        });
+      }
+      // new index
+      newLeafMap[name].mountIndex = index;
+      newLeafMap[name].fatherLeaf = this;
+
+      return newLeafMap[name];
+    });
+
+    Object.keys(leafMap).map((name) => {
+      if (!newLeafMap[name]) {
+        diffQueue.push({
+          preLeaf,
+          leaf: leafMap[name],
+          type: UPDATE_TYPES.REMOVE_LEAF,
+          fromIndex: leafMap[name].mountIndex,
+          toIndex: null,
+        });
       }
     });
 
-    // elementVNodes.map((vNode, idx) => {
-    //   const newLeaf = getLeafFromVNode(vNode);
-    //   const leaf = childrenLeaf[idx];
-    //   if (newLeaf.vNodeType === leaf.vNodeType) {
-    //     leaf.update(vNode);
-    //   }
-    // });
+    updateDepth--;
+    if (updateDepth === 0) {
+      // 具体的dom渲染
+      patch(diffQueue);
+      diffQueue = [];
+    }
+
+    // new index
+    this.childrenLeaf = childrenLeaf;
   }
 }
 

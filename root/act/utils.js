@@ -1,8 +1,8 @@
 // 差异更新的几种类型
-const UPDATE_TYPES = {
+export const UPDATE_TYPES = {
   MOVE_EXISTING: 1,
-  REMOVE_NODE: 2,
-  INSERT_MARKUP: 3,
+  REMOVE_LEAF: 2,
+  INSERT_LEAF: 3,
 };
 
 export function childrenLeafToMap(childrenLeaf) {
@@ -31,4 +31,41 @@ export function shouldUpdate(preLeaf, newLeaf) {
   }
   return false;
   // if (typeof preVNode === typeof newVNode && )
+}
+
+function insertLeaf(leaf, toIndex) {
+  const currentDom = leaf.dom,
+    fatherDom = leaf.fatherLeaf.dom,
+    siblingDom = fatherDom.children;
+  if (siblingDom.length <= toIndex) {
+    fatherDom.appendChild(currentDom);
+  } else {
+    fatherDom.insertBefore(currentDom, siblingDom[toIndex]);
+  }
+}
+function removeLeaf(leaf) {
+  const currentDom = leaf.dom,
+    fatherDom = leaf.fatherLeaf.dom;
+  fatherDom.removeChild(currentDom);
+}
+
+export function patch(diffQueue) {
+  diffQueue.map(({ preLeaf, leaf, type, fromIndex, toIndex }) => {
+    switch (type) {
+      case UPDATE_TYPES.MOVE_EXISTING:
+        if (fromIndex !== toIndex) {
+          insertLeaf(leaf, toIndex);
+        }
+        break;
+      case UPDATE_TYPES.INSERT_LEAF:
+        leaf.mount();
+        insertLeaf(leaf, toIndex);
+        break;
+      case UPDATE_TYPES.REMOVE_LEAF:
+        removeLeaf(preLeaf);
+        break;
+      default:
+        break;
+    }
+  });
 }

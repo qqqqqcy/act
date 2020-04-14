@@ -32,7 +32,7 @@ class Welcome extends React.Component {
   }
   render() {
     const arr =
-      new Date().getSeconds() % 2 ? ["aa", "bb", "cc"] : ["cc", "aa", "bb"];
+      new Date().getSeconds() % 2 ? ["aa", "bb", "cc"] : ["bb", "aa", "cc"];
     return (
       <div>
         <p>props.name {this.props.name}</p>

@@ -27,7 +27,7 @@ class Welcome extends React.Component {
         console.log("componentWillUpdate");
     }
     render() {
-        const arr = new Date().getSeconds() % 2 ? ["aa", "bb", "cc"] : ["cc", "aa", "bb"];
+        const arr = new Date().getSeconds() % 2 ? ["aa", "bb", "cc"] : ["bb", "aa", "cc"];
         return (React.createElement("div", null,
             React.createElement("p", null,
                 "props.name ",
