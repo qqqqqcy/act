@@ -92,6 +92,8 @@ export class ElementLeaf extends Leaf {
       const val = props[key];
       if (key === "className") {
         this.dom.setAttribute("class", val);
+      } else if (key[0] === "o" && key[1] === "n") {
+        this.dom[key.toLocaleLowerCase()] = val;
       } else {
         this.dom.setAttribute(key, val);
       }
@@ -151,13 +153,6 @@ export class ElementLeaf extends Leaf {
         diffQueue.push({
           preLeaf,
           leaf: newLeafMap[name],
-          type: UPDATE_TYPES.REMOVE_LEAF,
-          fromIndex: leafMap[name].mountIndex,
-          toIndex: null,
-        });
-        diffQueue.push({
-          preLeaf,
-          leaf: newLeafMap[name],
           type: UPDATE_TYPES.INSERT_LEAF,
           fromIndex: null,
           toIndex: index,
@@ -173,7 +168,7 @@ export class ElementLeaf extends Leaf {
     Object.keys(leafMap).map((name) => {
       if (!newLeafMap[name]) {
         diffQueue.push({
-          preLeaf,
+          preLeaf: leafMap[name],
           leaf: leafMap[name],
           type: UPDATE_TYPES.REMOVE_LEAF,
           fromIndex: leafMap[name].mountIndex,
@@ -183,6 +178,7 @@ export class ElementLeaf extends Leaf {
     });
 
     updateDepth--;
+
     if (updateDepth === 0) {
       // 具体的dom渲染
       patch(diffQueue);

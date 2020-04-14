@@ -31,14 +31,17 @@ class Welcome extends React.Component {
     console.log("componentWillUpdate");
   }
   render() {
-    const arr =
-      new Date().getSeconds() % 2 ? ["aa", "bb", "cc"] : ["bb", "aa", "cc"];
+    const arr = [
+      ["aa", "bb", "cc"],
+      ["bb", "aa", "cc"],
+      ["cc", "bb", "dd", "ee"],
+    ];
     return (
       <div>
         <p>props.name {this.props.name}</p>
         <p>state.val {this.state.val}</p>
         <ul>
-          {arr.map((key) => {
+          {arr[new Date().getSeconds() % 3].map((key) => {
             return <li key={key}>{key}</li>;
           })}
         </ul>
@@ -50,6 +53,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      inputVal: "",
       val: new Date().toLocaleTimeString(),
     };
   }
@@ -69,6 +73,16 @@ class App extends React.Component {
         className={this.props.className + " " + val}
         {...(new Date().getSeconds() % 2 ? { id: 1 } : {})}
       >
+        <input
+          type="text"
+          value={this.state.inputVal}
+          onInput={(e) => {
+            this.setState({
+              inputVal: e.currentTarget.value,
+            });
+          }}
+        />
+        <h2>{this.state.inputVal}</h2>
         {val}
         <Welcome name={val} />
         {new Date().getSeconds() % 2 ? <p>{val}</p> : <span>{val}</span>}

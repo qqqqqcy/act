@@ -15,6 +15,8 @@ export function childrenLeafToMap(childrenLeaf) {
     return leafMap;
 }
 export function shouldUpdate(preLeaf, newLeaf) {
+    if (!preLeaf)
+        return false;
     if (preLeaf.vNodeType === newLeaf.vNodeType) {
         const preVNode = preLeaf[preLeaf.vNodeType], newVNode = newLeaf[newLeaf.vNodeType];
         if (preLeaf.vNodeType === "textVNode") {
@@ -40,6 +42,8 @@ function insertLeaf(leaf, toIndex) {
     }
 }
 function removeLeaf(leaf) {
+    if (!leaf)
+        return;
     const currentDom = leaf.dom, fatherDom = leaf.fatherLeaf.dom;
     fatherDom.removeChild(currentDom);
 }
@@ -52,6 +56,7 @@ export function patch(diffQueue) {
                 }
                 break;
             case UPDATE_TYPES.INSERT_LEAF:
+                removeLeaf(preLeaf);
                 leaf.mount();
                 insertLeaf(leaf, toIndex);
                 break;

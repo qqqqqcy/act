@@ -27,7 +27,11 @@ class Welcome extends React.Component {
         console.log("componentWillUpdate");
     }
     render() {
-        const arr = new Date().getSeconds() % 2 ? ["aa", "bb", "cc"] : ["bb", "aa", "cc"];
+        const arr = [
+            ["aa", "bb", "cc"],
+            ["bb", "aa", "cc"],
+            ["cc", "bb", "dd", "ee"],
+        ];
         return (React.createElement("div", null,
             React.createElement("p", null,
                 "props.name ",
@@ -35,7 +39,7 @@ class Welcome extends React.Component {
             React.createElement("p", null,
                 "state.val ",
                 this.state.val),
-            React.createElement("ul", null, arr.map((key) => {
+            React.createElement("ul", null, arr[new Date().getSeconds() % 3].map((key) => {
                 return React.createElement("li", { key: key }, key);
             }))));
     }
@@ -44,6 +48,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            inputVal: "",
             val: new Date().toLocaleTimeString(),
         };
     }
@@ -59,6 +64,12 @@ class App extends React.Component {
     render() {
         const { val } = this.state;
         return (React.createElement("div", Object.assign({ className: this.props.className + " " + val }, (new Date().getSeconds() % 2 ? { id: 1 } : {})),
+            React.createElement("input", { type: "text", value: this.state.inputVal, onInput: (e) => {
+                    this.setState({
+                        inputVal: e.currentTarget.value,
+                    });
+                } }),
+            React.createElement("h2", null, this.state.inputVal),
             val,
             React.createElement(Welcome, { name: val }),
             new Date().getSeconds() % 2 ? React.createElement("p", null, val) : React.createElement("span", null, val)));
