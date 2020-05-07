@@ -11,6 +11,7 @@ My react-mini
 - [了不起的 Virtual DOM(二): 使用 TypeScript 开发简易 Virtual DOM 库](https://juejin.im/post/5d3c1786e51d4556db694ae2#heading-10)
 - [从零开始实现一个 React（一）：JSX 和虚拟 DOM - hujiulong](https://segmentfault.com/a/1190000013842289)
 - [从头实现一个简易版 React（一）- NANA](https://segmentfault.com/a/1190000013504156)
+- [React 源码剖析系列 － 不可思议的 react diff](https://zhuanlan.zhihu.com/p/)20346379
 
 # 一、creatElement
 
